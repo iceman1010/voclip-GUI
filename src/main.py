@@ -1,7 +1,6 @@
 """voclip-GUI entry point."""
 
 import sys
-import os
 from pathlib import Path
 
 from PySide6.QtWidgets import QApplication, QMessageBox
@@ -11,6 +10,11 @@ from main_window import MainWindow
 
 
 def main() -> int:
+    app = QApplication(sys.argv)
+    app.setApplicationName("voclip")
+    app.setApplicationDisplayName("voclip")
+    app.setQuitOnLastWindowClosed(False)
+
     lockfile_path = Path(QDir.tempPath()) / "voclip-gui.lock"
     lockfile = QLockFile(str(lockfile_path))
 
@@ -22,11 +26,6 @@ def main() -> int:
             "If you need to start a new instance, please close the existing one first.",
         )
         return 1
-
-    app = QApplication(sys.argv)
-    app.setApplicationName("voclip")
-    app.setApplicationDisplayName("voclip")
-    app.setQuitOnLastWindowClosed(False)
 
     window = MainWindow()
     window.show()

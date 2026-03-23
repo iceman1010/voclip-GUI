@@ -20,7 +20,7 @@ class ListenStatusWidget(QWidget):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self._setup_ui()
-        self.setFixedSize(280, 80)
+        self.setFixedSize(300, 90)
 
     def _setup_ui(self) -> None:
         layout = QVBoxLayout(self)
@@ -29,18 +29,20 @@ class ListenStatusWidget(QWidget):
 
         header = QHBoxLayout()
 
-        self._status_indicator = QLabel("●")
-        self._status_indicator.setStyleSheet("color: #4CAF50; font-size: 16px;")
+        self._status_indicator = QLabel("O")
+        self._status_indicator.setStyleSheet("color: #4CAF50; font-size: 18px; font-weight: bold;")
+        self._status_indicator.setFixedWidth(20)
         header.addWidget(self._status_indicator)
 
         self._status_label = QLabel("Listening for wake words...")
-        self._status_label.setStyleSheet("font-weight: bold;")
+        self._status_label.setStyleSheet("font-weight: bold; font-size: 13px;")
         header.addWidget(self._status_label, 1)
 
         layout.addLayout(header)
 
         self._detection_label = QLabel("")
         self._detection_label.setStyleSheet("color: #666; font-size: 11px;")
+        self._detection_label.setWordWrap(True)
         layout.addWidget(self._detection_label)
 
         self._stop_btn = QPushButton("Stop Listen Mode")
@@ -52,11 +54,16 @@ class ListenStatusWidget(QWidget):
 
     def set_detecting(self, is_detecting: bool) -> None:
         if is_detecting:
-            self._status_indicator.setStyleSheet("color: #FF9800; font-size: 16px;")
+            self._status_indicator.setStyleSheet(
+                "color: #FF9800; font-size: 18px; font-weight: bold;"
+            )
             self._status_label.setText("Transcribing...")
         else:
-            self._status_indicator.setStyleSheet("color: #4CAF50; font-size: 16px;")
+            self._status_indicator.setStyleSheet(
+                "color: #4CAF50; font-size: 18px; font-weight: bold;"
+            )
             self._status_label.setText("Listening for wake words...")
 
     def set_detection_text(self, text: str) -> None:
-        self._detection_label.setText(text)
+        clean_text = text.strip()
+        self._detection_label.setText(clean_text)
