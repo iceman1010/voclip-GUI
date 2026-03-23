@@ -4,16 +4,38 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "voclip-gui"
-version = "0.1.0"
+version = "0.7.0"
 description = "GUI frontend for voclip voice-to-clipboard tool"
+readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "PySide6>=6.5",
     "toml>=0.10",
 ]
+authors = [
+    {name = "iceman1010"}
+]
+license = {text = "MIT"}
+keywords = ["voice", "clipboard", "speech-to-text", "voclip"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+]
 
 [project.scripts]
 voclip-gui = "main:main"
+
+[project.urls]
+Homepage = "https://github.com/iceman1010/voclip-GUI"
+Repository = "https://github.com/iceman1010/voclip-GUI"
+Issues = "https://github.com/iceman1010/voclip-GUI/issues"
 
 [tool.ruff]
 line-length = 100

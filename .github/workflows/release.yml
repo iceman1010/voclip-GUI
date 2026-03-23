@@ -1,0 +1,176 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install PySide6 toml pyinstaller
+
+      - name: Download voclip binary
+        run: |
+          VERSION=$(curl -sL https://api.github.com/repos/iceman1010/voclip/releases/latest | grep tag_name | cut -d'"' -f4)
+          curl -sL "https://github.com/iceman1010/voclip/releases/download/${VERSION}/voclip-linux-x86_64.tar.gz" -o voclip.tar.gz
+          tar -xzf voclip.tar.gz
+
+      - name: Create icon
+        run: |
+          pip install Pillow
+          python -c "from PIL import Image; img = Image.open('favicon/android-chrome-192x192.png'); img.save('icon.png')"
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --windowed \
+            --name "voclip-GUI-linux" \
+            --icon "icon.png" \
+            --add-binary "voclip:." \
+            src/main.py
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          mv dist/voclip-GUI-linux dist/voclip-GUI-linux-bin
+          cp voclip dist/
+          chmod +x dist/voclip
+          zip -r voclip-GUI-linux.zip dist/*
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          files: voclip-GUI-linux.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    needs: create-release
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install PySide6 toml pyinstaller
+
+      - name: Download voclip binary
+        shell: pwsh
+        run: |
+          $response = Invoke-RestMethod -Uri "https://api.github.com/repos/iceman1010/voclip/releases/latest"
+          $version = $response.tag_name
+          $url = "https://github.com/iceman1010/voclip/releases/download/$version/voclip-windows-x86_64.zip"
+          Invoke-WebRequest -Uri $url -OutFile "voclip.zip"
+          Expand-Archive -Path "voclip.zip" -DestinationPath "." -Force
+
+      - name: Create icon
+        shell: pwsh
+        run: |
+          pip install Pillow
+          python -c "from PIL import Image; img = Image.open('favicon/android-chrome-192x192.png'); img.save('icon.png')"
+
+      - name: Build executable
+        shell: pwsh
+        run: |
+          pyinstaller --onefile --windowed `
+            --name "voclip-GUI-windows" `
+            --add-binary "voclip.exe:." `
+            src/main.py
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path dist -Force
+          Move-Item -Path "dist\voclip-GUI-windows.exe" -Destination "dist\voclip-GUI-windows-bin.exe"
+          Copy-Item -Path "voclip.exe" -Destination "dist\"
+          Compress-Archive -Path "dist\*" -DestinationPath "voclip-GUI-windows.zip"
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          files: voclip-GUI-windows.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos:
+    needs: create-release
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install PySide6 toml pyinstaller
+
+      - name: Download voclip binary
+        run: |
+          VERSION=$(curl -sL https://api.github.com/repos/iceman1010/voclip/releases/latest | grep tag_name | cut -d'"' -f4)
+          curl -sL "https://github.com/iceman1010/voclip/releases/download/${VERSION}/voclip-macos-x86_64.tar.gz" -o voclip.tar.gz
+          tar -xzf voclip.tar.gz
+
+      - name: Create icon
+        run: |
+          pip install Pillow
+          python -c "from PIL import Image; img = Image.open('favicon/apple-touch-icon.png'); img.save('icon.png')"
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --windowed \
+            --name "voclip-GUI-macos" \
+            --icon "icon.png" \
+            --add-binary "voclip:." \
+            src/main.py
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          mv dist/voclip-GUI-macos dist/voclip-GUI-macos-bin
+          cp voclip dist/
+          chmod +x dist/voclip
+          zip -r voclip-GUI-macos.zip dist/*
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          files: voclip-GUI-macos.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
