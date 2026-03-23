@@ -8,6 +8,7 @@ from pathlib import Path
 
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import QLockFile, QDir
+from PySide6.QtGui import QIcon
 
 from main_window import MainWindow
 
@@ -17,6 +18,26 @@ def get_bundle_dir() -> Path:
     if getattr(sys, "frozen", False):
         return Path(sys._MEIPASS)
     return Path(__file__).parent
+
+
+def get_icon_path() -> Path | None:
+    """Get the path to the app icon."""
+    bundle_dir = get_bundle_dir()
+
+    if sys.platform == "win32":
+        icon_path = bundle_dir / "icon.ico"
+        if icon_path.exists():
+            return icon_path
+    elif sys.platform == "darwin":
+        icon_path = bundle_dir / "icon.icns"
+        if icon_path.exists():
+            return icon_path
+    else:
+        icon_path = bundle_dir / "icon.png"
+        if icon_path.exists():
+            return icon_path
+
+    return None
 
 
 def ensure_voclip_available() -> bool:
@@ -46,6 +67,10 @@ def main() -> int:
     app.setApplicationDisplayName("voclip")
     app.setQuitOnLastWindowClosed(False)
 
+    icon_path = get_icon_path()
+    if icon_path:
+        app.setWindowIcon(QIcon(str(icon_path)))
+
     lockfile_path = Path(QDir.tempPath()) / "voclip-gui.lock"
     lockfile = QLockFile(str(lockfile_path))
 
@@ -68,6 +93,8 @@ def main() -> int:
         return 1
 
     window = MainWindow()
+    if icon_path:
+        window.setWindowIcon(QIcon(str(icon_path)))
     window.show()
 
     result = app.exec()

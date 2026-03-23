@@ -60,6 +60,7 @@ jobs:
           mkdir -p dist
           mv dist/voclip-GUI-linux dist/voclip-GUI-linux-bin
           cp voclip dist/
+          cp icon.png dist/
           chmod +x dist/voclip
           zip -r voclip-GUI-linux.zip dist/*
 
@@ -115,6 +116,7 @@ jobs:
           New-Item -ItemType Directory -Path dist -Force
           Move-Item -Path "dist\voclip-GUI-windows.exe" -Destination "dist\voclip-GUI-windows-bin.exe"
           Copy-Item -Path "voclip.exe" -Destination "dist\"
+          Copy-Item -Path "icon.png" -Destination "dist\"
           Compress-Archive -Path "dist\*" -DestinationPath "voclip-GUI-windows.zip"
 
       - name: Upload to Release
@@ -164,6 +166,7 @@ jobs:
           mkdir -p dist
           mv dist/voclip-GUI-macos dist/voclip-GUI-macos-bin
           cp voclip dist/
+          cp icon.png dist/
           chmod +x dist/voclip
           zip -r voclip-GUI-macos.zip dist/*
 
