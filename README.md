@@ -1,10 +1,10 @@
 # voclip-GUI
 
-<img src="src/icon.png" width="48" height="48" align="left" />
+![voclip-GUI icon](https://raw.githubusercontent.com/iceman1010/voclip-GUI/master/src/icon.png)
 
-A modern GUI frontend for [voclip](https://github.com/iceman1010/voclip) - a voice-to-clipboard tool that transcribes your speech and copies the text to your clipboard or types it directly.
+**Voice to clipboard — with a modern GUI.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+A GUI frontend for [voclip](https://github.com/iceman1010/voclip) - speaks your words and pastes them at your cursor.
 
 ## Features
 
@@ -14,8 +14,18 @@ A modern GUI frontend for [voclip](https://github.com/iceman1010/voclip) - a voi
 - **Clipboard & Type** - Output to clipboard or type directly into any application
 - **System Tray** - Runs quietly in the background with quick access menu
 - **Cross-Platform** - Available for Linux, macOS, and Windows
-- **Multiple Models** - Support for various Whisper models
-- **Audio Device Selection** - Choose your preferred microphone
+
+## Quick Start
+
+```bash
+# Install
+pip install PySide6 toml
+git clone https://github.com/iceman1010/voclip-GUI.git
+cd voclip-GUI/src
+
+# Run
+python main.py
+```
 
 ## Installation
 
@@ -28,15 +38,6 @@ A modern GUI frontend for [voclip](https://github.com/iceman1010/voclip) - a voi
 | Windows | [voclip-GUI-windows.zip](https://github.com/iceman1010/voclip-GUI/releases/latest) |
 
 Extract the archive and run the executable. The voclip binary is included.
-
-### Install from Source
-
-```bash
-pip install PySide6 toml
-git clone https://github.com/iceman1010/voclip-GUI.git
-cd voclip-GUI/src
-python main.py
-```
 
 ## Usage
 
@@ -60,11 +61,6 @@ Train custom wake words and commands:
 3. Follow the prompts to record samples
 4. Test your new wake word
 
-### Output Modes
-
-- **Clipboard** - Copies transcription to clipboard
-- **Type** - Types text directly into the active application
-
 ## System Tray
 
 Right-click the tray icon for quick access:
@@ -73,15 +69,14 @@ Right-click the tray icon for quick access:
 - Start/Stop Listen Mode
 - Quit
 
-## Settings
+## Wiki
 
-| Setting | Description |
-|---------|-------------|
-| Model | Whisper model to use (default: u3-rt-pro) |
-| Timeout | Silence timeout in seconds |
-| Delay | Recording delay after pressing record |
-| Audio Device | Select your microphone |
-| API Key | OpenAI API key for enhanced transcription |
+For more documentation, see the [wiki](https://github.com/iceman1010/voclip-GUI/wiki):
+- [Installation](https://github.com/iceman1010/voclip-GUI/wiki/Installation)
+- [Quick Start](https://github.com/iceman1010/voclip-GUI/wiki/Quick-Start)
+- [Features](https://github.com/iceman1010/voclip-GUI/wiki/Features)
+- [Settings](https://github.com/iceman1010/voclip-GUI/wiki/Settings)
+- [Troubleshooting](https://github.com/iceman1010/voclip-GUI/wiki/Troubleshooting)
 
 ## Requirements
 
@@ -90,51 +85,6 @@ Right-click the tray icon for quick access:
 - PySide6 6.5+
 - A working microphone
 
-## Development
-
-```bash
-# Clone the repository
-git clone https://github.com/iceman1010/voclip-GUI.git
-cd voclip-GUI
-
-# Install dependencies
-pip install PySide6 toml
-
-# Run from source
-cd src
-python main.py
-
-# Run tests
-python -m pytest tests/
-
-# Type check
-python -m mypy src/
-```
-
-## Architecture
-
-```
-src/
-├── main.py              # Entry point, single-instance lock
-├── main_window.py       # Main application window
-├── system_tray.py       # System tray icon and menu
-├── voclip_runner.py     # Subprocess manager for voclip
-├── config_manager.py    # Configuration file handling
-└── widgets/
-    ├── controls_panel.py      # Record button, listen mode toggle
-    ├── transcription_panel.py  # Live transcription display
-    ├── history_panel.py       # Transcription history
-    ├── settings_panel.py      # Configuration UI
-    ├── listen_status.py       # Listen mode status window
-    └── wakeword_panel.py      # Wake word training UI
-```
-
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
-
-## Links
-
-- [voclip-GUI Repository](https://github.com/iceman1010/voclip-GUI)
-- [voclip](https://github.com/iceman1010/voclip) - The underlying voice-to-clipboard tool
-- [Issues](https://github.com/iceman1010/voclip-GUI/issues) - Report bugs or request features
+MIT License
