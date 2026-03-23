@@ -1,6 +1,6 @@
 # voclip-GUI
 
-![voclip-GUI icon](https://raw.githubusercontent.com/iceman1010/voclip-GUI/master/src/icon.png)
+![voclip-GUI icon](https://raw.githubusercontent.com/iceman1010/voclip-GUI/master/favicon/android-chrome-192x192.png)
 
 **Voice to clipboard — with a modern GUI.**
 
