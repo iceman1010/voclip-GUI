@@ -41,8 +41,8 @@ jobs:
 
       - name: Download voclip binary
         run: |
-          VERSION=$(curl -sL https://api.github.com/repos/iceman1010/voclip/releases/latest | grep tag_name | cut -d'"' -f4)
-          curl -sL "https://github.com/iceman1010/voclip/releases/download/${VERSION}/voclip-linux-x86_64.tar.gz" -o voclip.tar.gz
+          gh release download latest -R iceman1010/voclip -p "voclip-linux-x86_64.tar.gz" -o voclip.tar.gz || \
+          gh api repos/iceman1010/voclip/releases/latest --jq '.assets[] | select(.name | contains("linux")) | .browser_download_url' | xargs curl -sL -o voclip.tar.gz
           tar -xzf voclip.tar.gz
 
       - name: Create icon
@@ -93,10 +93,8 @@ jobs:
       - name: Download voclip binary
         shell: pwsh
         run: |
-          $response = Invoke-RestMethod -Uri "https://api.github.com/repos/iceman1010/voclip/releases/latest"
-          $version = $response.tag_name
-          $url = "https://github.com/iceman1010/voclip/releases/download/$version/voclip-windows-x86_64.zip"
-          Invoke-WebRequest -Uri $url -OutFile "voclip.zip"
+          gh release download latest -R iceman1010/voclip -p "voclip-windows-x86_64.zip" -o voclip.zip || \
+          gh api repos/iceman1010/voclip/releases/latest --jq '.assets[] | select(.name | contains("windows")) | .browser_download_url' | % { Invoke-WebRequest -Uri $_ -OutFile "voclip.zip" }
           Expand-Archive -Path "voclip.zip" -DestinationPath "." -Force
 
       - name: Create icon
@@ -148,8 +146,8 @@ jobs:
 
       - name: Download voclip binary
         run: |
-          VERSION=$(curl -sL https://api.github.com/repos/iceman1010/voclip/releases/latest | grep tag_name | cut -d'"' -f4)
-          curl -sL "https://github.com/iceman1010/voclip/releases/download/${VERSION}/voclip-macos-x86_64.tar.gz" -o voclip.tar.gz
+          gh release download latest -R iceman1010/voclip -p "voclip-macos-x86_64.tar.gz" -o voclip.tar.gz || \
+          gh api repos/iceman1010/voclip/releases/latest --jq '.assets[] | select(.name | contains("macos")) | .browser_download_url' | xargs curl -sL -o voclip.tar.gz
           tar -xzf voclip.tar.gz
 
       - name: Create icon
