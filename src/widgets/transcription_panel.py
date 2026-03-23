@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QSizePolicy,
     QTextEdit,
     QVBoxLayout,
     QWidget,
@@ -25,10 +26,15 @@ class TranscriptionPanel(QWidget):
     def _setup_ui(self) -> None:
         """Initialize UI components."""
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(0, 0, 0, 4)
+        layout.setSpacing(4)
 
         header = QHBoxLayout()
-        header.addWidget(QLabel("Transcription"))
+        label = QLabel("Transcription")
+        font = label.font()
+        font.setBold(True)
+        label.setFont(font)
+        header.addWidget(label)
         header.addStretch()
 
         self._copy_btn = QPushButton("Copy")
@@ -44,7 +50,8 @@ class TranscriptionPanel(QWidget):
         self._text_edit = QTextEdit()
         self._text_edit.setReadOnly(True)
         self._text_edit.setPlaceholderText("Transcription will appear here...")
-        self._text_edit.setMinimumHeight(120)
+        self._text_edit.setMinimumHeight(80)
+        self._text_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout.addWidget(self._text_edit)
 
     @Slot(str)

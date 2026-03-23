@@ -7,7 +7,6 @@ from PySide6.QtCore import Slot
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
-    QLabel,
     QListWidget,
     QListWidgetItem,
     QPushButton,
@@ -26,10 +25,10 @@ class HistoryPanel(QWidget):
 
     def _setup_ui(self) -> None:
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(4, 8, 4, 4)
+        layout.setSpacing(4)
 
         header = QHBoxLayout()
-        header.addWidget(QLabel("History"))
         header.addStretch()
 
         copy_btn = QPushButton("Copy Selected")

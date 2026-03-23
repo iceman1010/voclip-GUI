@@ -5,11 +5,12 @@ from typing import Optional
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import (
     QComboBox,
+    QFormLayout,
     QGroupBox,
     QHBoxLayout,
-    QLabel,
     QLineEdit,
     QPushButton,
+    QSizePolicy,
     QSpinBox,
     QVBoxLayout,
     QWidget,
@@ -31,66 +32,54 @@ class SettingsPanel(QWidget):
     def _setup_ui(self) -> None:
         """Initialize UI components."""
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(4, 4, 4, 4)
 
         group = QGroupBox("Settings")
-        group_layout = QVBoxLayout(group)
+        form = QFormLayout(group)
+        form.setSpacing(8)
+        form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.DontWrapRows)
 
-        row1 = QHBoxLayout()
-        row1.addWidget(QLabel("Model:"))
         self._model_combo = QComboBox()
-        self._model_combo.setMinimumWidth(150)
+        self._model_combo.setMinimumWidth(200)
+        self._model_combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._model_combo.currentTextChanged.connect(self.model_changed.emit)
-        row1.addWidget(self._model_combo)
-        row1.addStretch()
-        group_layout.addLayout(row1)
+        form.addRow("Model:", self._model_combo)
 
-        row2 = QHBoxLayout()
-        row2.addWidget(QLabel("Timeout:"))
         self._timeout_spin = QSpinBox()
         self._timeout_spin.setRange(1, 30)
         self._timeout_spin.setValue(3)
         self._timeout_spin.setSuffix(" sec")
         self._timeout_spin.valueChanged.connect(lambda v: self.timeout_changed.emit(v))
-        row2.addWidget(self._timeout_spin)
-        row2.addStretch()
-        group_layout.addLayout(row2)
+        form.addRow("Timeout:", self._timeout_spin)
 
-        row3 = QHBoxLayout()
-        row3.addWidget(QLabel("Delay:"))
         self._delay_spin = QSpinBox()
         self._delay_spin.setRange(0, 10)
         self._delay_spin.setValue(1)
         self._delay_spin.setSuffix(" sec")
-        row3.addWidget(self._delay_spin)
-        row3.addStretch()
-        group_layout.addLayout(row3)
+        form.addRow("Delay:", self._delay_spin)
 
-        row4 = QHBoxLayout()
-        row4.addWidget(QLabel("Audio Device:"))
         self._device_combo = QComboBox()
         self._device_combo.setMinimumWidth(200)
+        self._device_combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._device_combo.currentTextChanged.connect(self.device_changed.emit)
-        row4.addWidget(self._device_combo)
-        row4.addStretch()
-        group_layout.addLayout(row4)
+        form.addRow("Audio Device:", self._device_combo)
 
-        row5 = QHBoxLayout()
-        row5.addWidget(QLabel("API Key:"))
+        api_key_row = QHBoxLayout()
+        api_key_row.setContentsMargins(0, 0, 0, 0)
         self._api_key_edit = QLineEdit()
         self._api_key_edit.setEchoMode(QLineEdit.EchoMode.Password)
         self._api_key_edit.setPlaceholderText("AssemblyAI API Key")
-        row5.addWidget(self._api_key_edit)
+        api_key_row.addWidget(self._api_key_edit)
 
         self._show_key_btn = QPushButton("Show")
         self._show_key_btn.setCheckable(True)
         self._show_key_btn.toggled.connect(self._toggle_key_visibility)
-        row5.addWidget(self._show_key_btn)
+        api_key_row.addWidget(self._show_key_btn)
 
         self._save_key_btn = QPushButton("Save")
         self._save_key_btn.clicked.connect(self._save_api_key)
-        row5.addWidget(self._save_key_btn)
-        group_layout.addLayout(row5)
+        api_key_row.addWidget(self._save_key_btn)
+        form.addRow("API Key:", api_key_row)
 
         layout.addWidget(group)
         layout.addStretch()

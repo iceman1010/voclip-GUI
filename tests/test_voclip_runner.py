@@ -11,9 +11,8 @@ from voclip_runner import VoclipRunner
 
 
 @pytest.fixture
-def runner(qtbot):
+def runner():
     runner = VoclipRunner()
-    qtbot.addWidget(runner)
     return runner
 
 

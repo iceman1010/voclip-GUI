@@ -1,4 +1,4 @@
-"""Control panel with record/listen buttons."""
+"""Control panel with record button and output mode selector."""
 
 from typing import Optional
 
@@ -9,80 +9,71 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QRadioButton,
-    QVBoxLayout,
     QWidget,
 )
 
 
 class ControlsPanel(QWidget):
-    """Panel with record, listen buttons and output mode selector."""
+    """Panel with record button and output mode selector (one-shot mode only)."""
 
     record_clicked = Signal(bool)
-    listen_clicked = Signal(bool)
+    listen_clicked = Signal()
     output_mode_changed = Signal(str)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self._is_recording = False
-        self._is_listening = False
         self._setup_ui()
 
     def _setup_ui(self) -> None:
         """Initialize UI components."""
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 8, 0, 8)
+        layout.setSpacing(8)
 
-        buttons_layout = QHBoxLayout()
+        layout.addStretch()
 
         self._record_btn = QPushButton("Record")
         self._record_btn.setCheckable(True)
-        self._record_btn.setMinimumWidth(100)
+        self._record_btn.setMinimumWidth(140)
+        self._record_btn.setMinimumHeight(44)
         self._record_btn.clicked.connect(self._on_record_clicked)
-        buttons_layout.addWidget(self._record_btn)
+        layout.addWidget(self._record_btn)
 
-        self._listen_btn = QPushButton("Listen")
-        self._listen_btn.setCheckable(True)
-        self._listen_btn.setMinimumWidth(100)
+        self._listen_btn = QPushButton("Start Listen Mode")
+        self._listen_btn.setMinimumWidth(140)
+        self._listen_btn.setMinimumHeight(44)
         self._listen_btn.clicked.connect(self._on_listen_clicked)
-        buttons_layout.addWidget(self._listen_btn)
+        layout.addWidget(self._listen_btn)
 
-        buttons_layout.addStretch()
-        layout.addLayout(buttons_layout)
+        layout.addSpacing(24)
 
-        output_layout = QHBoxLayout()
-        output_layout.addWidget(QLabel("Output:"))
+        layout.addWidget(QLabel("Output:"))
 
         self._clipboard_radio = QRadioButton("Clipboard")
         self._clipboard_radio.setChecked(True)
         self._clipboard_radio.toggled.connect(self._on_output_changed)
-        output_layout.addWidget(self._clipboard_radio)
+        layout.addWidget(self._clipboard_radio)
 
         self._type_radio = QRadioButton("Type")
         self._type_radio.toggled.connect(self._on_output_changed)
-        output_layout.addWidget(self._type_radio)
+        layout.addWidget(self._type_radio)
 
         self._output_group = QButtonGroup(self)
         self._output_group.addButton(self._clipboard_radio, 0)
         self._output_group.addButton(self._type_radio, 1)
 
-        output_layout.addStretch()
-        layout.addLayout(output_layout)
+        layout.addStretch()
 
     def _on_record_clicked(self, checked: bool) -> None:
         """Handle record button click."""
-        if checked and self._is_listening:
-            self._listen_btn.setChecked(False)
         self._is_recording = checked
         self._record_btn.setText("Stop" if checked else "Record")
         self.record_clicked.emit(checked)
 
-    def _on_listen_clicked(self, checked: bool) -> None:
+    def _on_listen_clicked(self) -> None:
         """Handle listen button click."""
-        if checked and self._is_recording:
-            self._record_btn.setChecked(False)
-        self._is_listening = checked
-        self._listen_btn.setText("Stop Listening" if checked else "Listen")
-        self.listen_clicked.emit(checked)
+        self.listen_clicked.emit()
 
     def _on_output_changed(self) -> None:
         """Handle output mode change."""
@@ -99,9 +90,7 @@ class ControlsPanel(QWidget):
 
     def set_listening(self, listening: bool) -> None:
         """Set listening state externally."""
-        self._is_listening = listening
-        self._listen_btn.setChecked(listening)
-        self._listen_btn.setText("Stop Listening" if listening else "Listen")
+        self._listen_btn.setText("Stop Listen Mode" if listening else "Start Listen Mode")
 
     def set_output_mode(self, mode: str) -> None:
         """Set output mode."""
@@ -116,6 +105,3 @@ class ControlsPanel(QWidget):
 
     def is_recording(self) -> bool:
         return self._is_recording
-
-    def is_listening(self) -> bool:
-        return self._is_listening
