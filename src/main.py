@@ -14,7 +14,7 @@ def main() -> int:
     lockfile_path = Path(QDir.tempPath()) / "voclip-gui.lock"
     lockfile = QLockFile(str(lockfile_path))
 
-    if not lockfile.tryLock():
+    if not lockfile.tryLock(100):
         QMessageBox.warning(
             None,
             "voclip-GUI",
