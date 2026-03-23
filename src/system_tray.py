@@ -1,10 +1,39 @@
 """System tray icon for voclip-GUI."""
 
+import sys
+from pathlib import Path
 from typing import Optional
 
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMenu, QSystemTrayIcon
+
+
+def _get_bundle_dir() -> Path:
+    """Get the directory where the bundled resources are located."""
+    if getattr(sys, "frozen", False):
+        return Path(sys._MEIPASS)
+    return Path(__file__).parent
+
+
+def _get_tray_icon() -> QIcon | None:
+    """Get the tray icon from bundle directory."""
+    bundle_dir = _get_bundle_dir()
+
+    if sys.platform == "win32":
+        icon_path = bundle_dir / "icon.ico"
+        if icon_path.exists():
+            return QIcon(str(icon_path))
+    elif sys.platform == "darwin":
+        icon_path = bundle_dir / "icon.icns"
+        if icon_path.exists():
+            return QIcon(str(icon_path))
+    else:
+        icon_path = bundle_dir / "icon.png"
+        if icon_path.exists():
+            return QIcon(str(icon_path))
+
+    return None
 
 
 class SystemTray(QSystemTrayIcon):
@@ -44,15 +73,9 @@ class SystemTray(QSystemTrayIcon):
         self.setContextMenu(self._menu)
         self.setToolTip("voclip")
 
-        try:
-            from PySide6.QtGui import QIcon
-            from PySide6.QtWidgets import QStyle, QApplication
-
-            app = QApplication.instance()
-            if app:
-                self.setIcon(app.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon))
-        except Exception:
-            pass
+        icon = _get_tray_icon()
+        if icon:
+            self.setIcon(icon)
 
         self.activated.connect(self._on_activated)
 
