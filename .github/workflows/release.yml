@@ -43,7 +43,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download latest -R iceman1010/voclip -p "voclip-linux-x86_64.tar.gz" -O voclip.tar.gz
+          VERSION=$(gh api repos/iceman1010/voclip/releases/latest --jq '.tag_name')
+          gh release download $VERSION -R iceman1010/voclip -p "voclip-linux-x86_64.tar.gz" -O voclip.tar.gz
           tar -xzf voclip.tar.gz
 
       - name: Create icon
@@ -96,7 +97,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download latest -R iceman1010/voclip -p "voclip-windows-x86_64.zip" -O voclip.zip
+          $version = gh api repos/iceman1010/voclip/releases/latest --jq '.tag_name'
+          gh release download $version -R iceman1010/voclip -p "voclip-windows-x86_64.zip" -O voclip.zip
           Expand-Archive -Path "voclip.zip" -DestinationPath "." -Force
 
       - name: Create icon
@@ -150,7 +152,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download latest -R iceman1010/voclip -p "voclip-macos-x86_64.tar.gz" -O voclip.tar.gz
+          VERSION=$(gh api repos/iceman1010/voclip/releases/latest --jq '.tag_name')
+          gh release download $VERSION -R iceman1010/voclip -p "voclip-macos-x86_64.tar.gz" -O voclip.tar.gz
           tar -xzf voclip.tar.gz
 
       - name: Create icon
