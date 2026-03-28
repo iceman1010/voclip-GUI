@@ -83,23 +83,25 @@ def main() -> int:
         )
         return 1
 
-    if not ensure_voclip_available():
-        QMessageBox.critical(
-            None,
-            "voclip-GUI",
-            "voclip binary not found!\n\n"
-            "Please make sure voclip is installed or the GUI was built correctly.",
-        )
-        return 1
+    try:
+        if not ensure_voclip_available():
+            QMessageBox.critical(
+                None,
+                "voclip-GUI",
+                "voclip binary not found!\n\n"
+                "Please make sure voclip is installed or the GUI was built correctly.",
+            )
+            return 1
 
-    window = MainWindow()
-    if icon_path:
-        window.setWindowIcon(QIcon(str(icon_path)))
-    window.show()
+        window = MainWindow()
+        if icon_path:
+            window.setWindowIcon(QIcon(str(icon_path)))
+        window.show()
 
-    result = app.exec()
-    lockfile.unlock()
-    return result
+        result = app.exec()
+        return result
+    finally:
+        lockfile.unlock()
 
 
 if __name__ == "__main__":
