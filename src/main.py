@@ -61,6 +61,23 @@ def ensure_voclip_available() -> bool:
     return shutil.which("voclip") is not None
 
 
+def try_acquire_lock(lockfile: QLockFile, lockfile_path: Path) -> bool:
+    """Try to acquire lock, removing stale locks if the process is dead."""
+    if lockfile.tryLock(100):
+        return True
+
+    lock_info = lockfile.getLockInfo()
+    if lock_info:
+        pid, app_name = lock_info[0], lock_info[1]
+        try:
+            os.kill(pid, 0)
+        except OSError:
+            lockfile_path.unlink()
+            return lockfile.tryLock(100)
+
+    return False
+
+
 def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName("voclip")
@@ -74,7 +91,7 @@ def main() -> int:
     lockfile_path = Path(QDir.tempPath()) / "voclip-gui.lock"
     lockfile = QLockFile(str(lockfile_path))
 
-    if not lockfile.tryLock(100):
+    if not try_acquire_lock(lockfile, lockfile_path):
         QMessageBox.warning(
             None,
             "voclip-GUI",
